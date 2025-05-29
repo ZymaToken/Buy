@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Buy ZYMA Token</title>
+  <title>ZYMA Token Exchange</title>
 
   <!-- Favicon -->
-   <link rel="icon" href="logo.png" type="image/png" />
-  
+  <link rel="icon" href="logo.png" type="image/png" />
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -16,7 +16,7 @@
 
   <!-- Meta -->
   <meta name="theme-color" content="#10B981" />
-  <meta name="description" content="Buy ZYMA token securely with BNB, ETH, BTC, USDT or TRX." />
+  <meta name="description" content="Buy or sell ZYMA token securely with multiple cryptocurrencies." />
 
   <style>
     body {
@@ -50,26 +50,54 @@
       0% { transform: rotate(0deg);}
       100% { transform: rotate(360deg);}
     }
+
+    /* Tab styling */
+    .tab {
+      cursor: pointer;
+      padding: 1rem 2rem;
+      font-weight: 600;
+      border-bottom: 3px solid transparent;
+      transition: border-color 0.3s ease;
+    }
+    .tab.active {
+      border-color: #10B981; /* emerald-500 */
+      color: #10B981;
+    }
+
+    .content-section {
+      display: none;
+    }
+    .content-section.active {
+      display: block;
+    }
   </style>
 </head>
 <body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white min-h-screen flex items-center justify-center p-4">
+
   <div class="w-full max-w-xl bg-gray-900 rounded-3xl p-8 shadow-2xl border border-emerald-500">
     <!-- Logo -->
-     <div class="flex justify-center mb-6">
+    <div class="flex justify-center mb-6">
       <img src="logo.png" alt="ZYMA Logo" class="w-24 h-24 rounded-full shadow-lg" />
     </div>
 
-    <h1 class="text-4xl font-extrabold text-center text-emerald-400 mb-8 tracking-wide">Buy ZYMA Token</h1>
+    <h1 class="text-4xl font-extrabold text-center text-emerald-400 mb-8 tracking-wide">ZYMA Token Exchange</h1>
 
-    <div class="space-y-6">
+    <!-- Tabs -->
+    <div class="flex justify-center mb-8 border-b border-gray-700">
+      <div id="tab-buy" class="tab active">Buy ZYMA</div>
+      <div id="tab-sell" class="tab ml-8">Sell ZYMA</div>
+    </div>
+
+    <!-- Buy Section -->
+    <section id="content-buy" class="content-section active space-y-6">
       <div>
-        <label for="amount" class="block mb-2 font-semibold text-lg">Token Amount</label>
-        <input id="amount" type="number" min="1" placeholder="e.g. 1000000" class="w-full px-5 py-3 bg-gray-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-400 text-lg font-medium placeholder-gray-400" />
+        <label for="buy-amount" class="block mb-2 font-semibold text-lg">Token Amount</label>
+        <input id="buy-amount" type="number" min="1" placeholder="e.g. 1000000" class="w-full px-5 py-3 bg-gray-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-400 text-lg font-medium placeholder-gray-400" />
       </div>
 
       <div>
-        <label for="currency" class="block mb-2 font-semibold text-lg">Payment Currency</label>
-        <select id="currency" class="w-full px-5 py-3 bg-gray-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-400 text-lg font-medium">
+        <label for="buy-currency" class="block mb-2 font-semibold text-lg">Payment Currency</label>
+        <select id="buy-currency" class="w-full px-5 py-3 bg-gray-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-400 text-lg font-medium">
           <option value="bnb">BNB (BSC)</option>
           <option value="eth">ETH (Ethereum)</option>
           <option value="usdt">USDT (TRC20)</option>
@@ -78,158 +106,295 @@
         </select>
       </div>
 
-      <button onclick="calculate()" id="calculateBtn" class="w-full bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 font-bold py-3 px-6 rounded-2xl text-xl shadow-md flex items-center justify-center transition duration-300">
+      <button onclick="calculate('buy')" id="buy-calculateBtn" class="w-full bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 font-bold py-3 px-6 rounded-2xl text-xl shadow-md flex items-center justify-center transition duration-300">
         Calculate
       </button>
 
-      <div id="priceResult" class="text-center font-semibold text-emerald-300 text-lg mt-4 hidden"></div>
+      <div id="buy-priceResult" class="text-center font-semibold text-emerald-300 text-lg mt-4 hidden"></div>
 
       <!-- Wallet & QR Code Section -->
-      <div id="walletInfo" class="mt-6 hidden bg-gray-800 p-6 rounded-2xl shadow-inner">
+      <div id="buy-walletInfo" class="mt-6 hidden bg-gray-800 p-6 rounded-2xl shadow-inner">
         <p class="font-semibold text-center mb-3 text-emerald-400 tracking-wide">Send to this address:</p>
-        <div id="walletAddress" class="break-all font-mono text-center text-lg select-all"></div>
+        <div id="buy-walletAddress" class="break-all font-mono text-center text-lg select-all"></div>
         <div class="flex justify-center mt-6">
-          <img id="qrCode" src="" alt="QR Code" class="w-36 h-36 border border-gray-600 p-2 rounded-xl shadow-lg" />
+          <img id="buy-qrCode" src="" alt="QR Code" class="w-36 h-36 border border-gray-600 p-2 rounded-xl shadow-lg" />
         </div>
       </div>
 
       <div>
-        <label for="userWallet" class="block mb-2 font-semibold text-lg">Your Wallet Address</label>
-        <input id="userWallet" type="text" placeholder="0x..." class="w-full px-5 py-3 bg-gray-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-400 text-lg font-medium placeholder-gray-400" />
+        <label for="buy-userWallet" class="block mb-2 font-semibold text-lg">Your Wallet Address</label>
+        <input id="buy-userWallet" type="text" placeholder="0x..." class="w-full px-5 py-3 bg-gray-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-400 text-lg font-medium placeholder-gray-400" />
       </div>
 
       <div>
-        <label for="txHash" class="block mb-2 font-semibold text-lg">Transaction Hash</label>
-        <input id="txHash" type="text" placeholder="0x..." class="w-full px-5 py-3 bg-gray-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-400 text-lg font-medium placeholder-gray-400" />
+        <label for="buy-txHash" class="block mb-2 font-semibold text-lg">Transaction Hash</label>
+        <input id="buy-txHash" type="text" placeholder="0x..." class="w-full px-5 py-3 bg-gray-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-400 text-lg font-medium placeholder-gray-400" />
       </div>
 
-      <button id="submitBtn" onclick="submitTransaction()" class="w-full bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 font-bold py-3 px-6 rounded-2xl text-xl shadow-md flex items-center justify-center transition duration-300">
+      <button id="buy-submitBtn" onclick="submitTransaction('buy')" class="w-full bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 font-bold py-3 px-6 rounded-2xl text-xl shadow-md flex items-center justify-center transition duration-300">
         Submit Transaction
       </button>
+    </section>
 
-      <div id="message" class="text-center font-semibold mt-6 text-lg"></div>
-    </div>
+    <!-- Sell Section -->
+    <section id="content-sell" class="content-section space-y-6">
+      <div>
+        <label for="sell-amount" class="block mb-2 font-semibold text-lg">Token Amount (min 500)</label>
+        <input id="sell-amount" type="number" min="500" placeholder="e.g. 1000" class="w-full px-5 py-3 bg-gray-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-400 text-lg font-medium placeholder-gray-400" />
+      </div>
+
+      <div>
+        <label for="sell-currency" class="block mb-2 font-semibold text-lg">Currency to Receive</label>
+        <select id="sell-currency" class="w-full px-5 py-3 bg-gray-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-400 text-lg font-medium">
+          <option value="bnb">BNB (BSC)</option>
+          <option value="eth">ETH (Ethereum)</option>
+          <option value="usdt">USDT (TRC20)</option>
+          <option value="btc">BTC (Bitcoin)</option>
+          <option value="trx">TRX (Tron)</option>
+        </select>
+      </div>
+
+      <button onclick="calculate('sell')" id="sell-calculateBtn" class="w-full bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 font-bold py-3 px-6 rounded-2xl text-xl shadow-md flex items-center justify-center transition duration-300">
+        Calculate
+      </button>
+
+      <div id="sell-priceResult" class="text-center font-semibold text-emerald-300 text-lg mt-4 hidden"></div>
+
+      <!-- Wallet & QR Code Section -->
+      <div id="sell-walletInfo" class="mt-6 hidden bg-gray-800 p-6 rounded-2xl shadow-inner">
+        <p class="font-semibold text-center mb-3 text-emerald-400 tracking-wide">Send your ZYMA tokens to:</p>
+        <div id="sell-walletAddress" class="break-all font-mono text-center text-lg select-all"></div>
+        <div class="flex justify-center mt-6">
+          <img id="sell-qrCode" src="" alt="QR Code" class="w-36 h-36 border border-gray-600 p-2 rounded-xl shadow-lg" />
+        </div>
+      </div>
+
+      <div>
+        <label for="sell-userWallet" class="block mb-2 font-semibold text-lg">Your Wallet Address to Receive Currency</label>
+        <input id="sell-userWallet" type="text" placeholder="0x..." class="w-full px-5 py-3 bg-gray-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-400 text-lg font-medium placeholder-gray-400" />
+      </div>
+
+      <div>
+        <label for="sell-txHash" class="block mb-2 font-semibold text-lg">Transaction Hash (ZYMA transfer)</label>
+        <input id="sell-txHash" type="text" placeholder="0x..." class="w-full px-5 py-3 bg-gray-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-400 text-lg font-medium placeholder-gray-400" />
+      </div>
+
+      <button id="sell-submitBtn" onclick="submitTransaction('sell')" class="w-full bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 font-bold py-3 px-6 rounded-2xl text-xl shadow-md flex items-center justify-center transition duration-300">
+        Submit Transaction
+      </button>
+    </section>
+
+    <div id="message" class="text-center font-semibold mt-6 text-lg"></div>
   </div>
 
 <script>
+  // Wallet addresses for payments
   const walletAddresses = {
-    bnb: "0xc4921424F3179f8feC288ab209CA3747a7B99D77",
-    eth: "0xc4921424F3179f8feC288ab209CA3747a7B99D77",
-    usdt: "TGSvpDpYTadqs28QaDTWGBHfvi2i7PSCQj",
-    btc: "bc1qpnadkg2r8h4cc7830wf8phzqd4jm4evtj7tnwj",
-    trx: "TGSvpDpYTadqs28QaDTWGBHfvi2i7PSCQj"
+    buy: {
+      bnb: "0xc4921424F3179f8feC288ab209CA3747a7B99D77",
+      eth: "0xc4921424F3179f8feC288ab209CA3747a7B99D77",
+      usdt: "TGSvpDpYTadqs28QaDTWGBHfvi2i7PSCQj",
+      btc: "bc1qpnadkg2r8h4cc7830wf8phzqd4jm4evtj7tnwj",
+      trx: "TGSvpDpYTadqs28QaDTWGBHfvi2i7PSCQj"
+    },
+    sell: {
+      zymatoken: "0x6C157E7A6e8e2FDB9814b46326c71BCA19B3a92B"
+    }
   };
 
-  const qrBaseURL = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=";
-  const tokenPriceUSD = 0.0003;
+  const qrBaseURL = "https://api.qrserver.com/v1/create-qr-code/?size=144x144&data=";
+
+  const tokenPriceUSD = 0.0003; // فرضی
   let currencyRatesUSD = { bnb: null, eth: null, usdt: 1, btc: null, trx: null };
 
-  async function fetchPrices() {
+  // تب‌ها و نمایش بخش‌ها
+  const tabs = {
+    buy: document.getElementById("tab-buy"),
+    sell: document.getElementById("tab-sell")
+  };
+  const contents = {
+    buy: document.getElementById("content-buy"),
+    sell: document.getElementById("content-sell")
+  };
+
+  tabs.buy.addEventListener("click", () => {
+    tabs.buy.classList.add("active");
+    tabs.sell.classList.remove("active");
+    contents.buy.classList.add("active");
+    contents.sell.classList.remove("active");
+    clearMessage();
+  });
+  tabs.sell.addEventListener("click", () => {
+    tabs.sell.classList.add("active");
+    tabs.buy.classList.remove("active");
+    contents.sell.classList.add("active");
+    contents.buy.classList.remove("active");
+    clearMessage();
+  });
+
+  // واکشی نرخ لحظه‌ای ارزها از coingecko
+  async function fetchCurrencyRates() {
     try {
-      const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=binancecoin,ethereum,bitcoin,tron&vs_currencies=usd");
-      const data = await res.json();
+      const resp = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=binancecoin,ethereum,bitcoin,tron&vs_currencies=usd");
+      const data = await resp.json();
       currencyRatesUSD.bnb = data.binancecoin.usd;
       currencyRatesUSD.eth = data.ethereum.usd;
       currencyRatesUSD.btc = data.bitcoin.usd;
       currencyRatesUSD.trx = data.tron.usd;
-    } catch (e) {
-      showMessage("Couldn't fetch live prices.", "red");
+    } catch {
+      console.error("Could not fetch currency rates, using fallback.");
+      currencyRatesUSD = { bnb: 320, eth: 1800, usdt: 1, btc: 28000, trx: 0.06 };
+    }
+  }
+  fetchCurrencyRates();
+
+  function clearMessage() {
+    const msg = document.getElementById("message");
+    msg.textContent = "";
+    msg.classList.remove("show");
+  }
+
+  function showMessage(text, isError = false) {
+    const msg = document.getElementById("message");
+    msg.textContent = text;
+    msg.classList.add("show");
+    msg.style.color = isError ? "#EF4444" : "#34D399"; // red or green
+    setTimeout(() => {
+      msg.classList.remove("show");
+    }, 6000);
+  }
+
+  // نمایش آدرس کیف پول و QR
+  function showWalletInfo(type, currency) {
+    const walletDiv = document.getElementById(`${type}-walletInfo`);
+    const addrDiv = document.getElementById(`${type}-walletAddress`);
+    const qrImg = document.getElementById(`${type}-qrCode`);
+    let address;
+
+    if (type === "buy") {
+      address = walletAddresses.buy[currency];
+    } else if (type === "sell") {
+      address = walletAddresses.sell.zymatoken;
+    }
+
+    if (address) {
+      addrDiv.textContent = address;
+      qrImg.src = qrBaseURL + encodeURIComponent(address);
+      walletDiv.classList.remove("hidden");
+    } else {
+      walletDiv.classList.add("hidden");
     }
   }
 
-  function calculatePrice(amount, currency) {
-    const usdTotal = amount * tokenPriceUSD;
-    return (usdTotal / currencyRatesUSD[currency]).toFixed(6);
-  }
+  // محاسبه قیمت
+  function calculate(type) {
+    clearMessage();
+    if(type === "buy") {
+      const amount = Number(document.getElementById("buy-amount").value);
+      const currency = document.getElementById("buy-currency").value;
 
-  function showMessage(msg, color = "emerald", timeout = 4000) {
-    const msgDiv = document.getElementById("message");
-    msgDiv.textContent = msg;
+      if (!amount || amount <= 0) {
+        showMessage("Please enter a valid token amount to buy.", true);
+        return;
+      }
+      if(!currencyRatesUSD[currency]){
+        showMessage("Currency rate is not available. Please try again later.", true);
+        return;
+      }
 
-    // رنگ پیام
-    let colorClass = "text-emerald-400";
-    if (color === "red") colorClass = "text-red-500";
-    else if (color === "yellow") colorClass = "text-yellow-400";
+      // محاسبه قیمت بر اساس نرخ دلار و قیمت توکن
+      const totalUSD = amount * tokenPriceUSD;
+      const currencyPrice = currencyRatesUSD[currency];
+      const priceInCurrency = totalUSD / currencyPrice;
 
-    msgDiv.className = `text-center font-semibold mt-6 text-lg ${colorClass} show`;
+      const priceDiv = document.getElementById("buy-priceResult");
+      priceDiv.textContent = `Price: ${priceInCurrency.toFixed(6)} ${currency.toUpperCase()}`;
+      priceDiv.classList.remove("hidden");
 
-    // مخفی شدن خودکار پیام بعد timeout میلی‌ثانیه
-    if (timeout > 0) {
-      setTimeout(() => {
-        msgDiv.classList.remove("show");
-      }, timeout);
+      showWalletInfo("buy", currency);
+
+    } else if(type === "sell") {
+      const amount = Number(document.getElementById("sell-amount").value);
+      const currency = document.getElementById("sell-currency").value;
+
+      if (!amount || amount < 500) {
+        showMessage("Minimum sell amount is 500 ZYMA tokens.", true);
+        return;
+      }
+      if(!currencyRatesUSD[currency]){
+        showMessage("Currency rate is not available. Please try again later.", true);
+        return;
+      }
+
+      const totalUSD = amount * tokenPriceUSD;
+      const currencyPrice = currencyRatesUSD[currency];
+      const priceInCurrency = totalUSD / currencyPrice;
+
+      const priceDiv = document.getElementById("sell-priceResult");
+      priceDiv.textContent = `You will receive approximately ${priceInCurrency.toFixed(6)} ${currency.toUpperCase()}`;
+      priceDiv.classList.remove("hidden");
+
+      showWalletInfo("sell");
+
     }
   }
 
-  function calculate() {
-    const amount = parseFloat(document.getElementById("amount").value);
-    const currency = document.getElementById("currency").value;
+  // ارسال تراکنش (فرضی)
+  function submitTransaction(type) {
+    clearMessage();
+    let amount, userWallet, txHash;
 
-    if (isNaN(amount) || amount <= 0 || !currencyRatesUSD[currency]) {
-      showMessage("Please enter a valid token amount and wait for prices.", "red");
-      return;
+    if(type === "buy") {
+      amount = Number(document.getElementById("buy-amount").value);
+      userWallet = document.getElementById("buy-userWallet").value.trim();
+      txHash = document.getElementById("buy-txHash").value.trim();
+
+      if (!amount || amount <= 0) {
+        showMessage("Please enter a valid token amount to buy.", true);
+        return;
+      }
+      if(userWallet.length < 10) {
+        showMessage("Please enter a valid wallet address.", true);
+        return;
+      }
+      if(txHash.length < 10) {
+        showMessage("Please enter a valid transaction hash.", true);
+        return;
+      }
+
+    } else if(type === "sell") {
+      amount = Number(document.getElementById("sell-amount").value);
+      userWallet = document.getElementById("sell-userWallet").value.trim();
+      txHash = document.getElementById("sell-txHash").value.trim();
+
+      if (!amount || amount < 500) {
+        showMessage("Minimum sell amount is 500 ZYMA tokens.", true);
+        return;
+      }
+      if(userWallet.length < 10) {
+        showMessage("Please enter a valid wallet address.", true);
+        return;
+      }
+      if(txHash.length < 10) {
+        showMessage("Please enter a valid transaction hash.", true);
+        return;
+      }
     }
 
-    const price = calculatePrice(amount, currency);
-    const priceResult = document.getElementById("priceResult");
-    priceResult.textContent = `You need to pay: ${price} ${currency.toUpperCase()}`;
-    priceResult.classList.remove("hidden");
+    // شبیه‌سازی ارسال داده
+    showMessage("Transaction submitted successfully! We'll verify and update you soon.", false);
 
-    const address = walletAddresses[currency];
-    document.getElementById("walletAddress").textContent = address;
-    document.getElementById("qrCode").src = qrBaseURL + encodeURIComponent(address);
-    document.getElementById("walletInfo").classList.remove("hidden");
-  }
-
-  async function submitTransaction() {
-    const amount = parseFloat(document.getElementById("amount").value);
-    const currency = document.getElementById("currency").value;
-    const userWallet = document.getElementById("userWallet").value.trim();
-    const txHash = document.getElementById("txHash").value.trim();
-    const submitBtn = document.getElementById("submitBtn");
-
-    if (isNaN(amount) || !userWallet || !txHash || !currencyRatesUSD[currency]) {
-      showMessage("Fill in all fields and calculate first.", "red");
-      return;
-    }
-
-    const paymentAmount = calculatePrice(amount, currency);
-
-    const data = {
-      tokenAmount: amount,
-      paymentCurrency: currency.toUpperCase(),
-      paymentAmount,
-      walletToSend: walletAddresses[currency],
-      userWallet,
-      transactionHash: txHash,
-      date: new Date().toISOString()
-    };
-
-    // نمایش اسپینر در دکمه ارسال
-    submitBtn.disabled = true;
-    const spinner = document.createElement("span");
-    spinner.className = "spinner";
-    submitBtn.appendChild(spinner);
-
-    try {
-      await fetch("https://script.google.com/macros/s/AKfycbyh6kY70_FhXJgLj_xFNGL_RF3SP_UkHtmjn-eCMJf3AMAdrEDej7yn30pXDFo2oxEIfA/exec", {
-        method: "POST",
-        mode: "no-cors", // دور زدن CORS
-        body: JSON.stringify(data),
-        headers: { "Content-Type": "application/json" }
-      });
-
-      showMessage("Transaction submitted successfully!", "emerald");
-    } catch (e) {
-      showMessage("Error submitting transaction.", "red");
-    } finally {
-      submitBtn.disabled = false;
-      const spinner = submitBtn.querySelector(".spinner");
-      if (spinner) submitBtn.removeChild(spinner);
+    // ریست کردن فرم‌ها (اختیاری)
+    if(type === "buy") {
+      // document.getElementById("buy-amount").value = "";
+      // document.getElementById("buy-userWallet").value = "";
+      // document.getElementById("buy-txHash").value = "";
+    } else {
+      // document.getElementById("sell-amount").value = "";
+      // document.getElementById("sell-userWallet").value = "";
+      // document.getElementById("sell-txHash").value = "";
     }
   }
-
-  window.onload = fetchPrices;
 </script>
 
 </body>
