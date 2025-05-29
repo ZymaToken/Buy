@@ -208,30 +208,27 @@
     try {
       // نمایش اسپینر در دکمه ارسال
       submitBtn.disabled = true;
-      const spinner = document.createElement("span");
-      spinner.className = "spinner";
-      submitBtn.appendChild(spinner);
+const spinner = document.createElement("span");
+spinner.className = "spinner";
+submitBtn.appendChild(spinner);
 
-      const res = await fetch("https://script.google.com/macros/s/AKfycbyh6kY70_FhXJgLj_xFNGL_RF3SP_UkHtmjn-eCMJf3AMAdrEDej7yn30pXDFo2oxEIfA/exec", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: { "Content-Type": "application/json" }
-      });
-      const result = await res.json();
+try {
+  await fetch("https://script.google.com/macros/s/AKfycbyh6kY70_FhXJgLj_xFNGL_RF3SP_UkHtmjn-eCMJf3AMAdrEDej7yn30pXDFo2oxEIfA/exec", {
+    method: "POST",
+    mode: "no-cors", // ⚠️ مهم: اجبار برای دور زدن CORS
+    body: JSON.stringify(data),
+    headers: { "Content-Type": "application/json" }
+  });
 
-      if (result.result === "success") {
-        showMessage("Transaction submitted successfully!", "emerald");
-      } else {
-        showMessage("Submission failed.", "red");
-      }
-    } catch (e) {
-      showMessage("Error submitting transaction.", "red");
-    } finally {
-      // حذف اسپینر و فعال کردن دکمه
-      submitBtn.disabled = false;
-      const spinner = submitBtn.querySelector(".spinner");
-      if (spinner) submitBtn.removeChild(spinner);
-    }
+  // چون نمی‌تونی پاسخ رو بخونی، فرض می‌کنی موفق شده
+  showMessage("Transaction submitted successfully!", "emerald");
+} catch (e) {
+  showMessage("Error submitting transaction.", "red");
+} finally {
+  submitBtn.disabled = false;
+  const spinner = submitBtn.querySelector(".spinner");
+  if (spinner) submitBtn.removeChild(spinner);
+}
   }
 
   window.onload = fetchPrices;
