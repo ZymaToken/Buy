@@ -381,8 +381,27 @@
       }
     }
 
-    // شبیه‌سازی ارسال داده
-    showMessage("Transaction submitted successfully! We'll verify and update you soon.", false);
+   fetch("https://script.google.com/macros/s/AKfycbyBsvhOLBscyFep8ysdhAF27ZxvK8dPD6uRVJmZ9bAL/dev", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    type,
+    amount,
+    currency: type === "buy"
+      ? document.getElementById("buy-currency").value
+      : document.getElementById("sell-currency").value,
+    wallet: userWallet,
+    txHash: txHash
+  })
+})
+.then(res => res.text())
+.then(data => {
+  showMessage("✅ Your transaction has been recorded. We'll verify and process it shortly.");
+})
+.catch(err => {
+  console.error(err);
+  showMessage("❌ Failed to submit. Please try again.", true);
+});
 
     // ریست کردن فرم‌ها (اختیاری)
     if(type === "buy") {
